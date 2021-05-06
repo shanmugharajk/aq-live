@@ -1,12 +1,16 @@
 import React from "react";
 
-import { useAirQualityData } from "~/services/use-air-quality-data";
+import { Dashboard } from "~/dashboard/Dashboard";
 
 export const App: React.FunctionComponent = () => {
-  const { data, error } = useAirQualityData();
-
-  console.log(error);
-  console.log(data);
-
-  return <div>Air Quality Live</div>;
+  return (
+    <div>
+      <header className="p-3 border-b border-gray-300">
+        <h1 className="text-2xl">Air Quality Monitoring</h1>
+      </header>
+      <main>
+        <Dashboard />
+      </main>
+    </div>
+  );
 };
