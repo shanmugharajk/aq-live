@@ -6,7 +6,12 @@ export type AqiStatus =
   | "Very Poor"
   | "Severe";
 
+export interface IChartData {
+  data: number;
+}
+
 export type Trend = "Inc" | "Dec";
+
 export interface AirQualityData {
   city: string;
   aqi: number;
@@ -14,4 +19,5 @@ export interface AirQualityData {
   lastUpdated: string;
   trend?: Trend;
   status: [AqiStatus, string];
+  chartData?: IChartData[];
 }

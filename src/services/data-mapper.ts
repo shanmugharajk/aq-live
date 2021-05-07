@@ -67,6 +67,7 @@ export function normalizeData(prevData: AirQualityData[], currentData: string) {
     currDataFlat[key].status = getAqiStatus(currDataFlat[key].aqi);
     currDataFlat[key].timestamp = new Date();
     currDataFlat[key].lastUpdated = "few seconds ago.";
+    currDataFlat[key].chartData = [{ data: currDataFlat[key].aqi }];
   }
 
   // == result with current data ==
@@ -78,6 +79,16 @@ export function normalizeData(prevData: AirQualityData[], currentData: string) {
     if (result[key]) {
       result[key].trend =
         prevDataFlat[key].aqi < result[key].aqi ? "Dec" : "Inc";
+
+      result[key].chartData = [
+        ...result[key].chartData!,
+        ...prevDataFlat[key].chartData!,
+      ];
+
+      if (result[key]?.chartData?.length! > 5) {
+        result[key].chartData?.splice(0, 1);
+      }
+
       continue;
     }
 
