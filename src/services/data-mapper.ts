@@ -17,7 +17,7 @@ function getValues(data: Record<string, AirQualityData>) {
     res.push(data[key]);
   }
 
-  // TODO: Better way? caching?
+  // TODO: Better way? caching possible?
   return res.sort(function (a, b) {
     if (a.city < b.city) {
       return -1;
@@ -45,12 +45,23 @@ function getAqiStatus(aqi: number): [AqiStatus, string] {
   }
 }
 
+function getLastUpdatedText(prevTime: Date) {
+  let minutes = (new Date().valueOf() - prevTime.valueOf()) / (1000 * 60);
+
+  return minutes < 1
+    ? "a minute ago"
+    : minutes < 59
+    ? `${minutes} ago`
+    : `at ${prevTime.toTimeString()}`;
+}
+
 export function normalizeData(prevData: AirQualityData[], currentData: string) {
   const currentJsonData = JSON.parse(currentData);
 
   const prevDataFlat = flattenData(prevData);
   const currDataFlat = flattenData(currentJsonData);
 
+  // == process current data ==
   for (let key in currDataFlat) {
     currDataFlat[key].aqi = Number(currDataFlat[key].aqi.toFixed(2));
     currDataFlat[key].status = getAqiStatus(currDataFlat[key].aqi);
@@ -58,8 +69,10 @@ export function normalizeData(prevData: AirQualityData[], currentData: string) {
     currDataFlat[key].lastUpdated = "few seconds ago.";
   }
 
+  // == result with current data ==
   let result: Record<string, AirQualityData> = { ...currDataFlat };
 
+  // == pacthing data with old & new ==
   for (let key in prevDataFlat) {
     // if new data is present
     if (result[key]) {
@@ -69,17 +82,7 @@ export function normalizeData(prevData: AirQualityData[], currentData: string) {
     }
 
     result[key] = prevDataFlat[key];
-    let currentTime = new Date();
-    let lastFetchedTime = result[key].timestamp;
-    let minutes =
-      (currentTime.valueOf() - lastFetchedTime.valueOf()) / (1000 * 60);
-
-    result[key].lastUpdated =
-      minutes < 1
-        ? "a minute ago"
-        : minutes < 59
-        ? `${minutes} ago`
-        : `at ${lastFetchedTime.toTimeString()}`;
+    result[key].lastUpdated = getLastUpdatedText(result[key].timestamp);
   }
 
   return getValues(result);

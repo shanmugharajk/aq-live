@@ -7,7 +7,7 @@ export const Table: React.FunctionComponent<ITableProps> = ({
   rows,
 }) => {
   return (
-    <table className="w-6/12">
+    <table className="min-w-full">
       <thead>
         <tr>
           {columns.map((col) => (

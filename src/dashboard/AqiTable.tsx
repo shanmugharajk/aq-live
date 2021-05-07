@@ -39,7 +39,18 @@ export const AqiTable: React.FunctionComponent<Props> = ({ rows }) => {
   return (
     <div className="m-3">
       <h2 className="my-4 text-xl">Citywise data</h2>
-      <Table columns={columns} rows={rows} />
+
+      <div className="w-5/12">
+        {rows.length === 0 ? (
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-100 my-4 rounded-md"></div>
+            <div className="h-4 bg-gray-200 my-4 rounded-md"></div>
+            <div className="h-4 bg-gray-200 my-4 rounded-md"></div>
+          </div>
+        ) : (
+          <Table columns={columns} rows={rows} />
+        )}
+      </div>
     </div>
   );
 };
